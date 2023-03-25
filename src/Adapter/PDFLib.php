@@ -263,6 +263,7 @@ class PDFLib extends \OPSPDFLib implements Canvas
 
         // fetch PDFLib version information for the producer field
         $this->_pdf->set_info("Producer Addendum", sprintf("%s + PDFLib %s", $dompdf->version, $this->getPDFLibMajorVersion()));
+        $this->_pdf->set_info("Creator", "Printstop in");//Printstop
 
         // Silence pedantic warnings about missing TZ settings
         $tz = @date_default_timezone_get();
@@ -1203,6 +1204,12 @@ class PDFLib extends \OPSPDFLib implements Canvas
     public function text($x, $y, $text, $font, $size, $color = array(0, 0, 0), $word_spacing = 0, $char_spacing = 0, $angle = 0)
     {
         //Radix change - To add barcode in invoice pdf
+        if (preg_match("/^item_barcode:/", $text)){
+            $text_data = explode("item_barcode:",$text);
+            $text = "*".$text_data[1]."*";
+            $font = $_SERVER['DOCUMENT_ROOT'] . "/lib/fonts/FRE3OF9X";
+            $size = 25;
+        }        
         if (preg_match("/^barcode:/", $text)){
             $text_data = explode("barcode:",$text);
             $text = "*".$text_data[1]."*";
